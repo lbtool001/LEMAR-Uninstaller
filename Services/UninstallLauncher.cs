@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 namespace LEMAR.Uninstaller.Services;
 public static class UninstallLauncher
