@@ -33,8 +33,8 @@ public partial class CleanupWindow : Window
             foreach (var item in report.Items) _items.Add(item);
             _scanFinished = true;
             Info.Text = _items.Count == 0
-                ? $"No exact-name leftovers found ({report.LocationsChecked} checked)"
-                : $"{_items.Count} possible leftovers; review carefully";
+                ? $"No matching leftovers found ({report.LocationsChecked} checked)"
+                : $"{_items.Count} findings (review-only items cannot be removed)";
             if (report.Warnings.Count > 0)
                 MessageBox.Show(string.Join("\n", report.Warnings.Take(10)),
                     $"Scan warnings ({report.Warnings.Count})", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -50,7 +50,7 @@ public partial class CleanupWindow : Window
     {
         if (!_scanFinished) return;
         Results.CommitEdit(DataGridEditingUnit.Row, true);
-        foreach (var item in _items) item.Selected = true;
+        foreach (var item in _items.Where(x => !x.ReviewOnly)) item.Selected = true;
         Results.Items.Refresh();
     }
 
