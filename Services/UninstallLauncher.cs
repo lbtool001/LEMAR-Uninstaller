@@ -27,7 +27,7 @@ public static class UninstallLauncher
             throw new InvalidOperationException("Only executable uninstall commands are supported in this version.");
         // Registered MSI strings often use /I; change to /X for actual removal.
         if (Path.GetFileName(executable).Equals("msiexec.exe", StringComparison.OrdinalIgnoreCase))
-            arguments = Regex.Replace(arguments, @"(?i)(?<!\S)/I(?=\s|\{|\")", "/X");
+            arguments = Regex.Replace(arguments, @"(?i)(?<!\S)/I(?=\s|\{|""|$)", "/X");
         Process.Start(new ProcessStartInfo(executable, arguments) { UseShellExecute = true, Verb = "runas" });
     }
 }
