@@ -1,18 +1,37 @@
-<Window x:Class="LEMAR.Uninstaller.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="LEMAR Uninstaller" Width="1050" Height="680" MinWidth="800" MinHeight="500" Background="{StaticResource BackgroundBrush}" FontFamily="Segoe UI" WindowStartupLocation="CenterScreen">
-  <Grid Margin="26"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-    <Grid Grid.Row="0" Margin="0,0,0,22"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-      <StackPanel><TextBlock Text="LEMAR Uninstaller" FontSize="29" FontWeight="Bold"/><TextBlock Text="Powerful. Clean. Completely Free." Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,5,0,0"/></StackPanel>
-      <Border Grid.Column="1" Background="{StaticResource PanelBrush}" CornerRadius="12" Padding="14,9" VerticalAlignment="Center"><TextBlock Text="v0.1  •  Free Edition" Foreground="{StaticResource AccentBrush}"/></Border>
-    </Grid>
-    <Grid Grid.Row="1" Margin="0,0,0,16"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-      <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" Background="#222D3D" Foreground="White" BorderThickness="0" FontSize="14" Padding="12" VerticalContentAlignment="Center" ToolTip="Search by name, publisher, or version"/>
-      <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="14,0,0,0"><Button Content="Refresh" Click="Refresh_Click"/><Button Content="Uninstall selected" Background="#3766BB" Click="Uninstall_Click" Margin="0"/></StackPanel>
-    </Grid>
-    <Border Grid.Row="2" Background="{StaticResource PanelBrush}" CornerRadius="12" Padding="10">
-      <DataGrid x:Name="AppsGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" HeadersVisibility="Column" GridLinesVisibility="None" Background="Transparent" Foreground="#EAF0F8" BorderThickness="0" RowBackground="#19212E" AlternatingRowBackground="#202A39" ColumnHeaderHeight="38" RowHeight="36" CanUserAddRows="False" SelectionChanged="AppsGrid_SelectionChanged">
-        <DataGrid.Columns><DataGridTextColumn Header="Application" Binding="{Binding Name}" Width="3*"/><DataGridTextColumn Header="Publisher" Binding="{Binding Publisher}" Width="2*"/><DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="*"/><DataGridTextColumn Header="Registry view" Binding="{Binding Architecture}" Width="*"/></DataGrid.Columns>
-      </DataGrid>
-    </Border>
-    <Grid Grid.Row="3" Margin="0,15,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="StatusText" Text="Ready" Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="CountText" Grid.Column="1" Foreground="{StaticResource AccentBrush}"/></Grid>
+<Window x:Class="LEMAR.Uninstaller.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="LEMAR Uninstaller" Width="660" Height="555" ResizeMode="CanMinimize" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" WindowStartupLocation="CenterScreen">
+ <Grid Margin="16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <Grid Grid.Row="0" Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel><TextBlock Text="LEMAR Uninstaller" FontSize="23" FontWeight="Bold"/><TextBlock Text="Powerful. Clean. Completely Free." Foreground="{DynamicResource MutedBrush}" FontSize="11" Margin="0,3,0,0"/></StackPanel>
+   <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button x:Name="ThemeButton" Click="Theme_Click" Margin="0,0,8,0" ToolTip="Switch dark/light theme"/><TextBlock Text="v0.1" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/></StackPanel>
   </Grid>
+  <Grid Grid.Row="1" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" Height="29" Background="{DynamicResource InputBrush}" Foreground="{DynamicResource TextBrush}" BorderBrush="{DynamicResource MutedBrush}" BorderThickness="1" FontSize="12" Padding="8,4" VerticalContentAlignment="Center" ToolTip="Search installed applications"/>
+   <Button Grid.Column="1" Content="Refresh" Height="29" Margin="8,0,0,0" Click="Refresh_Click"/>
+  </Grid>
+  <Border Grid.Row="2" Background="{DynamicResource PanelBrush}" CornerRadius="8" Padding="5">
+   <DataGrid x:Name="AppsGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" HeadersVisibility="Column" GridLinesVisibility="None" Background="{DynamicResource PanelBrush}" Foreground="{DynamicResource TextBrush}" BorderThickness="0" RowBackground="{DynamicResource PanelBrush}" AlternatingRowBackground="{DynamicResource AlternateBrush}" ColumnHeaderHeight="29" RowHeight="29" CanUserAddRows="False" SelectionChanged="AppsGrid_SelectionChanged" MouseDoubleClick="AppsGrid_MouseDoubleClick" PreviewMouseRightButtonDown="AppsGrid_PreviewMouseRightButtonDown">
+    <DataGrid.Resources>
+     <Style TargetType="DataGridRow"><Setter Property="Background" Value="{DynamicResource PanelBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource SelectedBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/></Trigger></Style.Triggers></Style>
+     <Style TargetType="DataGridCell"><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="BorderThickness" Value="0"/></Style>
+     <Style TargetType="DataGridColumnHeader"><Setter Property="Background" Value="{DynamicResource InputBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="BorderThickness" Value="0"/></Style>
+    </DataGrid.Resources>
+    <DataGrid.ContextMenu><ContextMenu>
+     <MenuItem Header="Uninstall..." Click="Uninstall_Click"/>
+     <MenuItem Header="Force Removal..." Click="ForceRemoval_Click"/>
+     <MenuItem Header="Remove Entry..." Click="RemoveEntry_Click"/>
+     <Separator/>
+     <MenuItem Header="Registry Entry" Click="RegistryEntry_Click"/>
+     <MenuItem Header="Installation Folder" Click="InstallationFolder_Click"/>
+     <Separator/>
+     <MenuItem Header="Search Online" Click="SearchOnline_Click"/>
+    </ContextMenu></DataGrid.ContextMenu>
+    <DataGrid.Columns>
+     <DataGridTemplateColumn Header="Application" Width="3*"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Image Source="{Binding Icon}" Width="18" Height="18" Margin="3,0,7,0"/><TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextBrush}"/></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+     <DataGridTextColumn Header="Size" Binding="{Binding SizeText}" Width="*"><DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn>
+     <DataGridTextColumn Header="Installed On" Binding="{Binding InstalledOn}" Width="1.45*"><DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn>
+    </DataGrid.Columns>
+   </DataGrid>
+  </Border>
+  <Grid Grid.Row="3" Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="StatusText" Text="Ready" FontSize="11" Foreground="{DynamicResource MutedBrush}" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="CountText" Grid.Column="1" FontSize="11" Foreground="{DynamicResource AccentBrush}"/></Grid>
+ </Grid>
 </Window>

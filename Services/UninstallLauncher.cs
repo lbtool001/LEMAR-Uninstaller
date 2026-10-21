@@ -6,7 +6,7 @@ namespace LEMAR.Uninstaller.Services;
 public static class UninstallLauncher
 {
     // Never pass a registry-provided command to cmd.exe or PowerShell.
-    public static void Launch(string command)
+    public static Process? Launch(string command)
     {
         if (string.IsNullOrWhiteSpace(command)) throw new InvalidOperationException("This program has no registered uninstaller.");
         command = Environment.ExpandEnvironmentVariables(command.Trim());
@@ -30,6 +30,6 @@ public static class UninstallLauncher
         // Registered MSI strings often use /I; change to /X for actual removal.
         if (Path.GetFileName(executable).Equals("msiexec.exe", StringComparison.OrdinalIgnoreCase))
             arguments = Regex.Replace(arguments, @"(?i)(?<!\S)/I(?=\s|\{|""|$)", "/X");
-        Process.Start(new ProcessStartInfo(executable, arguments) { UseShellExecute = true, Verb = "runas" });
+        return Process.Start(new ProcessStartInfo(executable, arguments) { UseShellExecute = true, Verb = "runas" });
     }
 }
