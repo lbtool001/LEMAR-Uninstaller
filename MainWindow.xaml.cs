@@ -1,6 +1,10 @@
+using System;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -59,15 +63,15 @@ public partial class MainWindow : Window
     private async void UninstallSelected()
     {
         if (AppsGrid.SelectedItem is not InstalledApp app) return;
-        if (string.IsNullOrWhiteSpace(app.UninstallString)) { MessageBox.Show("No registered uninstaller. Try Force Removal for a conservative scan."); return; }
+        if (string.IsNullOrWhiteSpace(app.UninstallString)) { MessageBox.Show("No registered uninstaller. Force Removal can review known per-user leftovers, but cannot fully uninstall the application."); return; }
         if (MessageBox.Show($"Launch the registered uninstaller for {app.Name}?", "Confirm uninstall", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
         try
         {
             var process = UninstallLauncher.Launch(app.UninstallString);
             StatusText.Text = $"Uninstaller launched for {app.Name}.";
-            if (process is null) { MessageBox.Show("The uninstaller launched, but its completion cannot be tracked. Use Force Removal after it finishes."); return; }
+            if (process is null) { MessageBox.Show("The uninstaller launched, but its completion cannot be tracked. Wait for it to finish before using the leftover scanner."); return; }
             await process.WaitForExitAsync();
-            if (MessageBox.Show("The uninstaller process exited. This does not guarantee removal succeeded. Scan for possible leftovers now?", "Post-uninstall scan", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("The uninstaller process exited. Confirm the application's uninstall has finished before continuing. Scan for possible leftovers now?", "Post-uninstall scan", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 new CleanupWindow(app) { Owner = this }.ShowDialog();
             await RefreshAsync();
         }
@@ -75,7 +79,9 @@ public partial class MainWindow : Window
     }
     private void ForceRemoval_Click(object sender, RoutedEventArgs e)
     {
-        if (AppsGrid.SelectedItem is InstalledApp app) new CleanupWindow(app) { Owner = this }.ShowDialog();
+        if (AppsGrid.SelectedItem is not InstalledApp app) return;
+        if (MessageBox.Show("This feature reviews possible per-user leftovers only. It does NOT remove the application's main installation or perform a full force uninstall.\n\nOpen the review window?", "Force removal limitations", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+            new CleanupWindow(app) { Owner = this }.ShowDialog();
     }
     private void RemoveEntry_Click(object sender, RoutedEventArgs e)
     {
@@ -87,9 +93,11 @@ public partial class MainWindow : Window
     }
     private void InstallationFolder_Click(object sender, RoutedEventArgs e)
     {
-        if (AppsGrid.SelectedItem is not InstalledApp app || !Directory.Exists(app.InstallLocation)) { MessageBox.Show("Installation folder is unavailable."); return; }
-        try { Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { app.InstallLocation }, UseShellExecute = true }); }
-        catch (Exception ex) { MessageBox.Show(ex.Message); }
+        if (AppsGrid.SelectedItem is not InstalledApp app) return;
+        string? folder = InstallationLocator.Find(app);
+        if (folder is null) { MessageBox.Show("No verified installation folder could be found in this application's registry metadata.", "Installation folder unavailable"); return; }
+        try { Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { folder }, UseShellExecute = true }); }
+        catch (Exception ex) { MessageBox.Show(ex.Message, "Cannot open folder", MessageBoxButton.OK, MessageBoxImage.Error); }
     }
     private void SearchOnline_Click(object sender, RoutedEventArgs e)
     {
