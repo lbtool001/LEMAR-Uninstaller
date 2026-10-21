@@ -1,3 +1,4 @@
+using System.IO;
 using LEMAR.Uninstaller.Models;
 using Microsoft.Win32;
 using System.Globalization;
